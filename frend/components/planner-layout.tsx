@@ -22,7 +22,9 @@ import {
   Bed,
   Home,
   Layers,
-  Sun
+  Sun,
+  User,
+  Users
 } from "lucide-react";
 import DestinationSearch, { Destination, popularDestinations } from "./destination-search";
 import BudgetSlider from "./budget-slider";
@@ -212,7 +214,7 @@ export default function PlannerLayout() {
   
   // Travelers Stepper States
   const [travelersCount, setTravelersCount] = useState(2);
-  const [travelerDetails, setTravelerDetails] = useState({ adults: 2, children: 0, infants: 0 });
+  const [travelerDetails, setTravelerDetails] = useState({ adults: 1, children: 0, infants: 1 });
 
   const handleIncrementTraveler = (type: "adults" | "children" | "infants") => {
     setTravelerDetails((prev) => {
@@ -230,7 +232,7 @@ export default function PlannerLayout() {
   const handleDecrementTraveler = (type: "adults" | "children" | "infants") => {
     setTravelerDetails((prev) => {
       const copy = { ...prev };
-      if (type === "adults") copy.adults = Math.max(1, copy.adults - 1);
+      if (type === "adults") copy.adults = Math.max(0, copy.adults - 1);
       if (type === "children") copy.children = Math.max(0, copy.children - 1);
       if (type === "infants") copy.infants = Math.max(0, copy.infants - 1);
 
@@ -534,248 +536,261 @@ export default function PlannerLayout() {
 
   return (
     <div className="min-h-screen text-slate-150 flex flex-col md:flex-row relative bg-[#050814]">
-      
-      {/* 1. LEFT SIDE PLANNER PANEL (Static 60% width, independently scrollable) */}
-      <div className="w-full md:w-[60%] h-screen overflow-y-auto bg-[#050814] px-4 md:px-6 py-5 space-y-4 flex flex-col justify-between scrollbar-thin shrink-0">
-        <div className="space-y-4">
+          {/* 1. LEFT SIDE PLANNER PANEL (Static 60% width, naturally growing, scrollbar-free) */}
+      <div className="w-full md:w-[60%] bg-[#050814] px-4 py-4 flex flex-col shrink-0 select-none">
+        <div className="space-y-4 flex flex-col">
           {/* Header */}
-          <div className="border-b border-slate-850 pb-2">
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
-              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500 font-sans">GoTraveller AI Engine</span>
+          <div className="border-b border-slate-850/60 pb-1.5 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-yellow-400" />
+                <span className="text-[8px] font-bold uppercase tracking-wider text-slate-500 font-sans">GoTraveller AI Engine</span>
+              </div>
+              <h2 className="text-base font-bold text-slate-100 font-serif mt-0.5">Planner Dashboard</h2>
             </div>
-            <h2 className="text-xl font-bold text-slate-100 font-serif mt-0.5">Planner Dashboard</h2>
+            <div className="text-[9px] text-slate-450 bg-[#0b1120] border border-slate-800 px-2 py-0.5 rounded-full">
+              📍 Ahmedabad
+            </div>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleCreateJourney} className="space-y-4">
+          <form onSubmit={handleCreateJourney} className="space-y-4 flex flex-col">
             
             {/* SECTION 1: Destination (Full Width) */}
-            <DestinationSearch
-              onSelect={(dest) => setDestination(dest)}
-              defaultValue={destination.name}
-            />
+            <div className="space-y-0.5">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                Where to?
+              </label>
+              <DestinationSearch
+                onSelect={(dest) => setDestination(dest)}
+                defaultValue={destination.name}
+              />
+            </div>
 
-            {/* SECTION 2: Top Information Row (Start Date, End Date, Travelers) */}
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr_1fr_2.2fr] gap-4 items-end">
-              {/* Start Date */}
-              <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                  Start Date
-                </label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-3 w-3.5 h-3.5 text-slate-500" />
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                    }}
-                    className="w-full bg-[#050810] border border-slate-800 rounded-xl py-2 pl-9 pr-2 text-xs text-slate-200 focus:outline-none focus:border-yellow-400/50 h-[38px]"
-                  />
-                </div>
-              </div>
-
-              {/* End Date */}
-              <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                  End Date
-                </label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-3 w-3.5 h-3.5 text-slate-500" />
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                    }}
-                    className="w-full bg-[#050810] border border-slate-800 rounded-xl py-2 pl-9 pr-2 text-xs text-slate-200 focus:outline-none focus:border-yellow-400/50 h-[38px]"
-                  />
-                </div>
-              </div>
-
-              {/* Travelers (Inline steppers) */}
-              <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                  Travelers
-                </label>
-                <div className="bg-[#050810]/75 border border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-2 h-auto">
-                  {/* Adults */}
-                  <div className="flex sm:flex-col items-center justify-between sm:justify-center text-center w-full sm:w-1/3 border-b sm:border-b-0 sm:border-r border-slate-850/60 pb-3 sm:pb-0 sm:pr-3 last:border-0 last:pb-0 last:pr-0">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Adults</span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => handleDecrementTraveler("adults")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
-                      >
-                        -
-                      </button>
-                      <span className="text-sm font-extrabold text-slate-100 w-5 text-center select-none">{travelerDetails.adults}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleIncrementTraveler("adults")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
-                      >
-                        +
-                      </button>
+            {/* SECTION 2 & 3: Calendar and Travelers Row as a single 2-column grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-[58%_32%] gap-x-6 lg:gap-x-8 gap-y-3 justify-center items-stretch">
+              
+              {/* Left Column: Calendar Section */}
+              <div className="space-y-2.5 flex flex-col justify-between">
+                
+                {/* Start Date & End Date Row */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Start Date */}
+                  <div className="space-y-0.5">
+                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                      Start Date
+                    </label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-2.5 top-2 w-3 h-3 text-slate-500" />
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full bg-[#050810] border border-slate-800 rounded-lg py-1 pl-8 pr-2 text-xs text-slate-200 focus:outline-none focus:border-yellow-400/50 h-[30px] leading-tight"
+                      />
                     </div>
                   </div>
 
-                  {/* Children */}
-                  <div className="flex sm:flex-col items-center justify-between sm:justify-center text-center w-full sm:w-1/3 border-b sm:border-b-0 sm:border-r border-slate-850/60 pb-3 sm:pb-0 sm:px-3 last:border-0 last:pb-0 last:px-0">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Children</span>
-                    <div className="flex items-center gap-3">
+                  {/* End Date */}
+                  <div className="space-y-0.5">
+                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                      End Date
+                    </label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-2.5 top-2 w-3 h-3 text-slate-500" />
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full bg-[#050810] border border-slate-800 rounded-lg py-1 pl-8 pr-2 text-xs text-slate-200 focus:outline-none focus:border-yellow-400/50 h-[30px] leading-tight"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Calendar Card Grid */}
+                <div className="bg-[#050810]/75 border border-slate-800/80 rounded-xl p-2.5 space-y-1.5 font-sans flex flex-col justify-between flex-1">
+                  {/* Month navigation header */}
+                  <div className="flex justify-between items-center">
+                    <button
+                      type="button"
+                      onClick={handlePrevMonth}
+                      className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <span className="text-[9px] font-bold text-slate-200 uppercase tracking-widest">
+                      {months[currentMonth]} {currentYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNextMonth}
+                      className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Days of Week Header */}
+                  <div className="grid grid-cols-7 text-center">
+                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((dayName) => (
+                      <span key={dayName} className="text-[8px] font-bold text-slate-600 uppercase tracking-wider">
+                        {dayName}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Days Grid */}
+                  <div className="grid grid-cols-7 text-center gap-y-0.5">
+                    {daysGrid.map((cell, idx) => {
+                      if (!cell.isCurrentMonth) {
+                        return (
+                          <span
+                            key={idx}
+                            className="text-[9px] text-slate-850 py-0.5 flex items-center justify-center pointer-events-none select-none"
+                          >
+                            {cell.day}
+                          </span>
+                        );
+                      }
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleDayClick(cell.day)}
+                          className={`text-[9px] py-0.5 flex items-center justify-center transition-all ${getDayClass(
+                            cell.day
+                          )}`}
+                        >
+                          {cell.day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Traveler Card */}
+              <div className="bg-[#050810]/75 border border-slate-800/80 rounded-xl p-2.5 flex flex-col justify-between font-sans text-xs">
+                {/* Dynamic Traveler Icon Container at the top */}
+                <div className="flex flex-col items-center justify-center py-1">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={travelersCount}
+                      initial={{ scale: 0.85, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.85, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="text-yellow-400 flex justify-center items-center h-8"
+                    >
+                      {travelersCount === 1 ? (
+                        <User className="w-7 h-7 filter drop-shadow-[0_0_8px_rgba(250,204,21,0.25)]" />
+                      ) : travelersCount === 2 ? (
+                        <Users className="w-7 h-7 filter drop-shadow-[0_0_8px_rgba(250,204,21,0.25)]" />
+                      ) : (
+                        <div className="relative">
+                          <Users className="w-7 h-7 filter drop-shadow-[0_0_8px_rgba(250,204,21,0.25)]" />
+                          <span className="absolute -bottom-1 -right-1 bg-yellow-400 text-slate-950 text-[7px] font-black px-1 rounded-full border border-slate-950 leading-none">
+                            {travelersCount}
+                          </span>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                  <span className="block text-[8px] font-bold text-slate-500 uppercase tracking-wider mt-1 text-center select-none">
+                    Travelers Count
+                  </span>
+                </div>
+
+                {/* Compact steppers for Kids, Men, and Women */}
+                <div className="space-y-1.5 pt-1.5 border-t border-slate-850/60">
+                  {/* Kids Row */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Kids</span>
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
                         onClick={() => handleDecrementTraveler("children")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-350 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
                       >
                         -
                       </button>
-                      <span className="text-sm font-extrabold text-slate-100 w-5 text-center select-none">{travelerDetails.children}</span>
+                      <span className="text-[9px] font-extrabold text-slate-100 w-3 text-center select-none">{travelerDetails.children}</span>
                       <button
                         type="button"
                         onClick={() => handleIncrementTraveler("children")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-355 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
                       >
                         +
                       </button>
                     </div>
                   </div>
 
-                  {/* Infants */}
-                  <div className="flex sm:flex-col items-center justify-between sm:justify-center text-center w-full sm:w-1/3 sm:pl-3">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Infants</span>
-                    <div className="flex items-center gap-3">
+                  {/* Men Row */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Men</span>
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
-                        onClick={() => handleDecrementTraveler("infants")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
+                        onClick={() => handleDecrementTraveler("adults")}
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-355 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
                       >
                         -
                       </button>
-                      <span className="text-sm font-extrabold text-slate-100 w-5 text-center select-none">{travelerDetails.infants}</span>
+                      <span className="text-[9px] font-extrabold text-slate-100 w-3 text-center select-none">{travelerDetails.adults}</span>
                       <button
                         type="button"
-                        onClick={() => handleIncrementTraveler("infants")}
-                        className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 flex items-center justify-center text-sm transition-colors active:scale-95 shrink-0"
+                        onClick={() => handleIncrementTraveler("adults")}
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-355 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
                       >
                         +
                       </button>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
 
-            {/* SECTION 3: Calendar & Compact Summary Card Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-3 items-stretch">
-              
-              {/* Calendar Grid wrapper (65%) */}
-              <div className="bg-[#050810]/75 border border-slate-800/85 rounded-xl p-3 space-y-2 font-sans">
-                {/* Month navigation header */}
-                <div className="flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={handlePrevMonth}
-                    className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="text-[10px] font-bold text-slate-200 uppercase tracking-widest">
-                    {months[currentMonth]} {currentYear}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleNextMonth}
-                    className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {/* Days of Week Header */}
-                <div className="grid grid-cols-7 text-center">
-                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((dayName) => (
-                    <span key={dayName} className="text-[8px] font-bold text-slate-600 uppercase tracking-wider">
-                      {dayName}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Days Grid */}
-                <div className="grid grid-cols-7 text-center gap-y-0.5">
-                  {daysGrid.map((cell, idx) => {
-                    if (!cell.isCurrentMonth) {
-                      return (
-                        <span
-                          key={idx}
-                          className="text-[10px] text-slate-800 py-1 flex items-center justify-center pointer-events-none select-none"
-                        >
-                          {cell.day}
-                        </span>
-                      );
-                    }
-                    return (
+                  {/* Women Row */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Women</span>
+                    <div className="flex items-center gap-1">
                       <button
-                        key={idx}
                         type="button"
-                        onClick={() => handleDayClick(cell.day)}
-                        className={`text-[10px] py-1 flex items-center justify-center transition-all ${getDayClass(
-                          cell.day
-                        )}`}
+                        onClick={() => handleDecrementTraveler("infants")}
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-355 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
                       >
-                        {cell.day}
+                        -
                       </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Compact Summary Card (35%) */}
-              <div className="bg-[#050810]/75 border border-slate-800/85 rounded-xl p-3 flex flex-col justify-between space-y-2 font-sans text-xs">
-                <div>
-                  <span className="block text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-1">Trip Details</span>
-                  <div className="space-y-1 text-[11px]">
-                    <div className="flex justify-between border-b border-slate-850 pb-1">
-                      <span className="text-slate-450">Duration</span>
-                      <span className="font-semibold text-slate-250">{duration}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-slate-850 pb-1">
-                      <span className="text-slate-450">Total Days</span>
-                      <span className="font-bold text-yellow-400">{calculateDaysCount()} Days</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-450">Nights</span>
-                      <span className="font-semibold text-slate-250">{calculateDaysCount() - 1 > 0 ? calculateDaysCount() - 1 : 0} Nights</span>
+                      <span className="text-[9px] font-extrabold text-slate-100 w-3 text-center select-none">{travelerDetails.infants}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleIncrementTraveler("infants")}
+                        className="w-4.5 h-4.5 rounded-full bg-slate-900 border border-slate-800 text-slate-355 hover:text-white hover:border-slate-700 flex items-center justify-center text-[10px] transition-colors active:scale-90 shrink-0"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div className="bg-yellow-400/5 border border-yellow-400/10 rounded-lg p-2 text-[9px] text-slate-400 leading-normal">
-                  ✈️ <span className="font-bold text-slate-200">Trip Scope:</span> Planning a bespoke {accommodation.toLowerCase()} trip to {destination.name.split(",")[0]} for {travelersCount} traveler{travelersCount > 1 ? "s" : ""}.
                 </div>
               </div>
             </div>
 
             {/* SECTION 4: Estimated Budget Slider */}
-            <BudgetSlider onChange={(val) => setBudget(val)} />
+            <div className="space-y-0.5">
+              <BudgetSlider onChange={(val) => setBudget(val)} />
+            </div>
 
-            {/* SECTION 5: Trip Types Single Row */}
+            {/* SECTION 5: Trip Types Row */}
             <TripTypeCards selectedIds={interests} onChange={(ids) => setInterests(ids)} />
 
-            {/* SECTION 6: Transportation Preferences (5 columns single row) */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-350">
+            {/* SECTION 6: Transportation Preferences (3 options) */}
+            <div className="space-y-1">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-450">
                 Transportation Preference
               </label>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: "driving", label: "Car", icon: Car },
-                  { id: "bus", label: "Bus", icon: Bus },
-                  { id: "train", label: "Train", icon: Train },
+                  { id: "bus", label: "Bus / Train", icon: Bus },
                   { id: "flight", label: "Flight", icon: Plane },
-                  { id: "walking", label: "Walking", icon: Compass },
                 ].map((item) => {
                   const Icon = item.icon;
                   const isSelected = transport === item.id;
@@ -784,71 +799,37 @@ export default function PlannerLayout() {
                       key={item.id}
                       type="button"
                       onClick={() => setTransport(item.id as any)}
-                      className={`p-2.5 rounded-xl border bg-[#050810]/55 flex flex-col items-center gap-1 text-center transition-all ${
+                      className={`p-2 rounded-xl border bg-[#050810]/55 flex flex-col items-center justify-center gap-1 text-center transition-all h-[48px] select-none ${
                         isSelected
                           ? "border-yellow-400 bg-yellow-400/5 text-yellow-400 font-bold"
-                          : "border-slate-800 text-slate-400 hover:border-slate-700/60 hover:text-slate-200"
+                          : "border-slate-800 text-slate-450 hover:border-slate-700/60 hover:text-slate-200"
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-[9px] font-bold">{item.label}</span>
+                      <Icon className="w-3.5 h-3.5" />
+                      <span className="text-[9px] font-bold leading-tight">{item.label}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* SECTION 7: Accommodation Preferences (5 columns single row) */}
-            <div className="space-y-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-350">
-                Accommodation Type
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {[
-                  { id: "hotel", label: "Hotel", icon: Building2 },
-                  { id: "resort", label: "Resort", icon: Palmtree },
-                  { id: "hostel", label: "Hostel", icon: Bed },
-                  { id: "camping", label: "Camping", icon: Tent },
-                  { id: "apartment", label: "Apartment", icon: Home },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const isSelected = accommodation.toLowerCase() === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setAccommodation(item.label)}
-                      className={`p-2.5 rounded-xl border bg-[#050810]/55 flex flex-col items-center gap-1 text-center transition-all ${
-                        isSelected
-                          ? "border-yellow-400 bg-yellow-400/5 text-yellow-400 font-bold"
-                          : "border-slate-800 text-slate-400 hover:border-slate-700/60 hover:text-slate-200"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-[9px] font-bold">{item.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* SECTION 8: AI Planning Filters (Compact chips) */}
-            <div className="space-y-2 pt-2 border-t border-slate-850">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-350">
+            {/* SECTION 7: AI Planning Filters (Compact chips) */}
+            <div className="space-y-1 pt-1.5 border-t border-slate-850/50">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-450">
                 AI Planning Filters
               </label>
-              <div className="flex flex-wrap gap-1.5">
-                {allChips.map((chip) => {
+              <div className="flex flex-wrap gap-1">
+                {["Budget Friendly", "Family Friendly", "Adventure", "Luxury", "Nature", "Culture"].map((chip) => {
                   const isSelected = activeChips.includes(chip);
                   return (
                     <button
                       key={chip}
                       type="button"
                       onClick={() => toggleChip(chip)}
-                      className={`px-3 py-1.5 rounded-full border text-[9px] font-bold select-none transition-all ${
+                      className={`px-2.5 py-1 rounded-full border text-[8px] font-bold select-none transition-all ${
                         isSelected
                           ? "bg-yellow-400 border-yellow-400 text-slate-950 shadow-md shadow-yellow-400/10"
-                          : "bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                          : "bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-750 hover:text-slate-200"
                       }`}
                     >
                       {chip}
@@ -858,15 +839,15 @@ export default function PlannerLayout() {
               </div>
             </div>
 
-            {/* SECTION 9: Center Button */}
-            <div className="flex justify-center pt-3">
+            {/* SECTION 8: Generate Button */}
+            <div className="flex justify-center pt-1.5">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full max-w-sm bg-yellow-400 hover:bg-yellow-500 disabled:bg-yellow-400/30 text-slate-950 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-yellow-400/15 active:scale-[0.99]"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-yellow-400/30 text-slate-950 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-300 shadow-lg shadow-yellow-400/15 active:scale-[0.98] h-[38px] select-none"
               >
-                <Sparkles className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-                <span className="text-xs uppercase tracking-wider font-bold">{loading ? "Generating Your Route..." : "Create My Journey"}</span>
+                <Sparkles className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                <span className="text-[10px] uppercase tracking-wider font-bold">{loading ? "Generating Your Route..." : "Create My Journey"}</span>
               </button>
             </div>
           </form>
@@ -874,25 +855,29 @@ export default function PlannerLayout() {
 
         {/* Simulated Itinerary Output */}
         {timelinePlan.length > 0 && (
-          <div className="glass-panel p-4 rounded-xl border-l-4 border-l-yellow-400 space-y-2 mt-4">
-            <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
-              <h3 className="font-serif text-sm font-bold text-yellow-400">
+          <div className="glass-panel p-2 rounded-xl border-l-4 border-l-yellow-400 space-y-1 mt-2.5 text-left bg-[#070b16]/90 border border-slate-800 shadow-lg shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-850/60 pb-1">
+              <h3 className="font-serif text-[10px] font-bold text-yellow-400 uppercase tracking-wider">
                 Generated Itinerary
               </h3>
-              <span className="flex items-center gap-1 text-[9px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                <CheckCircle className="w-3 h-3" />
+              <span className="flex items-center gap-0.5 text-[8px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/10 px-1 rounded border border-emerald-500/20">
+                <CheckCircle className="w-2 h-2" />
                 <span>Ready</span>
               </span>
             </div>
-            <div className="space-y-2 font-sans text-[11px] text-slate-300">
-              <p className="font-bold text-white">Custom plan to {destination.name} is calculated successfully:</p>
-              <ul className="space-y-1.5">
-                {timelinePlan.map((spot, idx) => (
-                  <li key={idx} className="flex gap-2">
+            <div className="font-sans text-[9px] text-slate-350">
+              <ul className="space-y-0.5">
+                {timelinePlan.slice(0, 3).map((spot, idx) => (
+                  <li key={idx} className="flex gap-1.5 truncate">
                     <span className="text-yellow-400 font-bold">Day {idx + 1}:</span>
-                    <span>Visit {spot.name} ({spot.category}) for {spot.visitTime}.</span>
+                    <span className="truncate">Visit {spot.name} for {spot.visitTime}.</span>
                   </li>
                 ))}
+                {timelinePlan.length > 3 && (
+                  <li className="text-slate-500 text-[8px] italic pl-7">
+                    + {timelinePlan.length - 3} more days (see map routes)
+                  </li>
+                )}
               </ul>
             </div>
           </div>
