@@ -35,7 +35,7 @@ export default function TripTypeCards({ selectedIds, onChange }: TripTypeCardsPr
       <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
         Trip Types & Interests
       </label>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
         {tripTypes.map((type) => {
           const Icon = type.icon;
           const isSelected = selectedIds.includes(type.id);

@@ -60,14 +60,14 @@ export default function SavedView() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 md:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-serif text-3xl md:text-4xl text-slate-50 font-bold tracking-tight mb-2">
+          <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl text-slate-50 font-bold tracking-tight mb-2">
             Your Travel Vault
           </h1>
-          <p className="text-slate-400 text-sm font-sans">
+          <p className="text-slate-400 text-xs md:text-sm font-sans">
             Access your curated itineraries, completed journeys, and upcoming expeditions.
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function SavedView() {
       </div>
 
       {/* Grid of cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         {trips.map((trip) => (
           <div
             key={trip.id}

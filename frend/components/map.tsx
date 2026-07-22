@@ -76,10 +76,22 @@ export default function Map({
       tileLayerRef.current = layer;
 
       setTimeout(() => map.invalidateSize(), 300);
+
+      const handleResize = () => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      };
+      window.addEventListener("resize", handleResize);
+      (map as any)._resizeListener = handleResize;
     })();
 
     return () => {
       if (mapInstanceRef.current) {
+        const resizeListener = (mapInstanceRef.current as any)._resizeListener;
+        if (resizeListener) {
+          window.removeEventListener("resize", resizeListener);
+        }
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }

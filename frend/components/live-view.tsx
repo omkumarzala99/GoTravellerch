@@ -511,92 +511,80 @@ export default function LiveView() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 className="flex-1 p-2 text-xs bg-black text-white rounded"
-                placeholder="Ask..."
-              />
-              <button className="bg-yellow-400 px-3 rounded">
-                <Send className="w-3 h-3" />
-              </button>
-            </form>
-
-          </div>
-        </div> */}
-         {/* Side Panel (Right 1/3) */}
-        <div className="space-y-6 flex flex-col h-full justify-between">
-          {/* Today's Plan Timeline */}
-          <div className="glass-panel p-5 rounded-2xl space-y-4 bg-[#070b16]/75">
-            <h3 className="font-serif text-base font-bold text-slate-100 border-b border-slate-800/60 pb-2.5">
-              Today's Plan
-            </h3>
-            <div className="space-y-4 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-800">
-              {timeline.map((item, idx) => (
-                <div key={idx} className="flex gap-4 items-start relative pl-1">
-                  {/* Status dot */}
-                  <div className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center z-10 shrink-0 mt-1 ${
-                    item.status === "completed"
-                      ? "bg-sky-500 border-sky-400 text-slate-950"
-                      : item.status === "active"
-                      ? "bg-[#0b1120] border-cyan-400 text-cyan-400"
-                      : "bg-[#0b1120] border-slate-700 text-slate-600"
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      item.status === "completed" ? "bg-slate-950" : item.status === "active" ? "bg-cyan-400 animate-ping" : "bg-slate-700"
-                    }`} />
-                  </div>
-                  <div>
-                    <span className="block text-[10px] font-bold text-yellow-400">{item.time}</span>
-                    <span className="block text-xs font-bold text-slate-200 mt-0.5">{item.location}</span>
-                    <span className="block text-[10px] text-slate-400 mt-1">{item.desc}</span>
-                  </div>
+        {/* Today's Plan Timeline */}
+        <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 bg-[#070b16]/75 order-1 lg:order-2">
+          <h3 className="font-serif text-sm md:text-base font-bold text-slate-100 border-b border-slate-800/60 pb-2.5">
+            Today's Plan
+          </h3>
+          <div className="space-y-4 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-800">
+            {timeline.map((item, idx) => (
+              <div key={idx} className="flex gap-4 items-start relative pl-1">
+                {/* Status dot */}
+                <div className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center z-10 shrink-0 mt-1 ${
+                  item.status === "completed"
+                    ? "bg-sky-500 border-sky-400 text-slate-950"
+                    : item.status === "active"
+                    ? "bg-[#0b1120] border-cyan-400 text-cyan-400"
+                    : "bg-[#0b1120] border-slate-700 text-slate-600"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    item.status === "completed" ? "bg-slate-950" : item.status === "active" ? "bg-cyan-400 animate-ping" : "bg-slate-700"
+                  }`} />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Voya Guide Chat */}
-          <div className="glass-panel rounded-2xl flex flex-col justify-between h-[300px] overflow-hidden bg-[#070b16]/75">
-            {/* Chat header */}
-            <div className="px-4 py-3 bg-[#0b1120]/50 border-b border-slate-800/80 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {/* <Sparkles className="w-4 h-4 text-yellow-400" /> */}
-                <span className="text-xs font-bold text-slate-200">Voya Guide</span>
+                <div>
+                  <span className="block text-[10px] font-bold text-yellow-400">{item.time}</span>
+                  <span className="block text-xs font-bold text-slate-200 mt-0.5">{item.location}</span>
+                  <span className="block text-[10px] text-slate-400 mt-1">{item.desc}</span>
+                </div>
               </div>
-              <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            </div>
-
-            {/* Message log */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-thin">
-              {chatHistory.map((msg, idx) => (
-                <div key={idx} className={`space-y-1 ${msg.role === "user" ? "text-right" : "text-left"}`}>
-                  <div className={`inline-block px-3 py-2 rounded-xl text-xs max-w-[85%] leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-blue-600 text-white rounded-tr-none"
-                      : "bg-slate-800/65 text-slate-200 border border-slate-700/50 rounded-tl-none"
-                  }`}>
-                    {msg.content}
-                  </div>
-                  <span className="block text-[8px] text-slate-500 font-bold px-1">{msg.time}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Input Form */}
-            <form onSubmit={handleSendChat} className="p-3 border-t border-slate-800/80 bg-[#050810]/45 flex gap-2">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ask about weather, routing..."
-                className="w-full bg-[#050810] border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-yellow-400/50"
-              />
-              <button
-                type="submit"
-                className="bg-yellow-400 hover:bg-yellow-500 text-slate-950 p-2 rounded-lg transition-colors flex items-center justify-center shrink-0"
-              >
-                <Send className="w-3.5 h-3.5" />
-              </button>
-            </form>
+            ))}
           </div>
         </div>
+
+        {/* Voya Guide Chat */}
+        <div className="glass-panel rounded-2xl flex flex-col justify-between h-[300px] overflow-hidden bg-[#070b16]/75 order-3 lg:order-3">
+          {/* Chat header */}
+          <div className="px-4 py-3 bg-[#0b1120]/50 border-b border-slate-800/80 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-200">Voya Guide</span>
+            </div>
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+          </div>
+
+          {/* Message log */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 scrollbar-thin">
+            {chatHistory.map((msg, idx) => (
+              <div key={idx} className={`space-y-1 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                <div className={`inline-block px-3 py-2 rounded-xl text-xs max-w-[85%] leading-relaxed ${
+                  msg.role === "user"
+                    ? "bg-blue-600 text-white rounded-tr-none"
+                    : "bg-slate-800/65 text-slate-200 border border-slate-700/50 rounded-tl-none"
+                }`}>
+                  {msg.content}
+                </div>
+                <span className="block text-[8px] text-slate-500 font-bold px-1">{msg.time}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Input Form */}
+          <form onSubmit={handleSendChat} className="p-3 border-t border-slate-800/80 bg-[#050810]/45 flex gap-2">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Ask about weather, routing..."
+              className="w-full bg-[#050810] border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-yellow-400/50"
+            />
+            <button
+              type="submit"
+              className="bg-yellow-400 hover:bg-yellow-500 text-slate-950 p-2 rounded-lg transition-colors flex items-center justify-center shrink-0"
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </form>
+        </div>
+
       </div>
     </div>
   );

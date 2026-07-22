@@ -535,10 +535,10 @@ export default function PlannerLayout() {
   }
 
   return (
-    <div className="min-h-screen text-slate-150 flex flex-col md:flex-row relative bg-[#050814]">
-          {/* 1. LEFT SIDE PLANNER PANEL (Static 60% width, naturally growing, scrollbar-free) */}
-      <div className="w-full md:w-[60%] bg-[#050814] px-4 py-4 flex flex-col shrink-0 select-none">
-        <div className="space-y-4 flex flex-col">
+    <div className="min-h-screen text-slate-150 flex flex-col lg:flex-row relative bg-[#050814]">
+          {/* 1. LEFT SIDE PLANNER PANEL (Naturally growing, scrollbar-free) */}
+      <div className="w-full lg:w-[65%] bg-[#050814] px-4 py-4 md:px-6 md:py-5 lg:px-8 lg:py-6 flex flex-col shrink-0 select-none">
+        <div className="space-y-4 md:space-y-5 lg:space-y-6 flex flex-col">
           {/* Header */}
           <div className="border-b border-slate-850/60 pb-1.5 flex items-center justify-between">
             <div>
@@ -546,7 +546,7 @@ export default function PlannerLayout() {
                 <Sparkles className="w-3 h-3 text-yellow-400" />
                 <span className="text-[8px] font-bold uppercase tracking-wider text-slate-500 font-sans">GoTraveller AI Engine</span>
               </div>
-              <h2 className="text-base font-bold text-slate-100 font-serif mt-0.5">Planner Dashboard</h2>
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-100 font-serif mt-0.5">Planner Dashboard</h2>
             </div>
             <div className="text-[9px] text-slate-450 bg-[#0b1120] border border-slate-800 px-2 py-0.5 rounded-full">
               📍 Ahmedabad
@@ -554,7 +554,7 @@ export default function PlannerLayout() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleCreateJourney} className="space-y-4 flex flex-col">
+          <form onSubmit={handleCreateJourney} className="space-y-4 md:space-y-5 lg:space-y-6 flex flex-col">
             
             {/* SECTION 1: Destination (Full Width) */}
             <div className="space-y-0.5">
@@ -574,7 +574,7 @@ export default function PlannerLayout() {
               <div className="space-y-2.5 flex flex-col justify-between">
                 
                 {/* Start Date & End Date Row */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Start Date */}
                   <div className="space-y-0.5">
                     <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500">
@@ -786,7 +786,7 @@ export default function PlannerLayout() {
               <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-450">
                 Transportation Preference
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {[
                   { id: "driving", label: "Car", icon: Car },
                   { id: "bus", label: "Bus / Train", icon: Bus },
@@ -844,7 +844,7 @@ export default function PlannerLayout() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-yellow-400/30 text-slate-950 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-300 shadow-lg shadow-yellow-400/15 active:scale-[0.98] h-[38px] select-none"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-yellow-400/30 text-slate-950 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-300 shadow-lg shadow-yellow-400/15 active:scale-[0.98] h-[52px] lg:h-[38px] select-none"
               >
                 <Sparkles className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
                 <span className="text-[10px] uppercase tracking-wider font-bold">{loading ? "Generating Your Route..." : "Create My Journey"}</span>
@@ -884,10 +884,10 @@ export default function PlannerLayout() {
         )}
       </div>
 
-      {/* 2. RIGHT SIDE MAP PANEL (Static 40% width, relative, full height, never scrollable) */}
+      {/* 2. RIGHT SIDE MAP PANEL */}
       <div
-        className={`w-full md:w-[40%] h-screen relative overflow-hidden bg-[#070b16] shrink-0 ${
-          mobileMapOpen ? "fixed inset-0 z-30" : "hidden md:block"
+        className={`w-full lg:w-[35%] lg:h-screen lg:sticky lg:top-0 h-[450px] relative overflow-hidden bg-[#070b16] shrink-0 ${
+          mobileMapOpen ? "fixed inset-0 z-30 !h-screen" : "block"
         }`}
       >
         <MapComponent
@@ -904,12 +904,12 @@ export default function PlannerLayout() {
         />
 
         {/* FLOATING QUICK ACTIONS (Bottom-Right of Map - Absolute Overlay) */}
-        <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 z-[9999] flex flex-col gap-3 pointer-events-auto">
+        <div className="absolute bottom-3 right-3 left-3 lg:left-auto lg:bottom-6 lg:right-6 z-[9999] flex flex-wrap lg:flex-col justify-end gap-2.5 sm:gap-3 pointer-events-auto">
           {/* Map Style Toggle */}
           <button
             type="button"
             onClick={() => setMapStyle((prev) => (prev === "dark" ? "satellite" : "dark"))}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
+            className={`w-11 h-11 lg:w-9 lg:h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
               mapStyle === "satellite"
                 ? "bg-blue-500 border-blue-400 text-white"
                 : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white"
@@ -923,7 +923,7 @@ export default function PlannerLayout() {
           <button
             type="button"
             onClick={resetMapView}
-            className="w-9 h-9 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center shadow-lg transition-colors"
+            className="w-11 h-11 lg:w-9 lg:h-9 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center shadow-lg transition-colors"
             title="Reset Map Center"
           >
             <Navigation className="w-4 h-4 transform rotate-45" />
@@ -933,7 +933,7 @@ export default function PlannerLayout() {
           <button
             type="button"
             onClick={() => setShowAttractions((prev) => !prev)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
+            className={`w-11 h-11 lg:w-9 lg:h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
               showAttractions
                 ? "bg-yellow-400 border-yellow-300 text-slate-950 font-bold"
                 : "bg-slate-900 border-slate-800 text-slate-400"
@@ -947,7 +947,7 @@ export default function PlannerLayout() {
           <button
             type="button"
             onClick={() => setShowHotels((prev) => !prev)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
+            className={`w-11 h-11 lg:w-9 lg:h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
               showHotels
                 ? "bg-blue-600 border-blue-500 text-white font-bold"
                 : "bg-slate-900 border-slate-800 text-slate-400"
@@ -961,7 +961,7 @@ export default function PlannerLayout() {
           <button
             type="button"
             onClick={() => setShowRestaurants((prev) => !prev)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
+            className={`w-11 h-11 lg:w-9 lg:h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
               showRestaurants
                 ? "bg-orange-500 border-orange-400 text-white font-bold"
                 : "bg-slate-900 border-slate-800 text-slate-400"
@@ -975,7 +975,7 @@ export default function PlannerLayout() {
           <button
             type="button"
             onClick={() => setShowRoute((prev) => !prev)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
+            className={`w-11 h-11 lg:w-9 lg:h-9 rounded-full flex items-center justify-center shadow-lg border transition-all ${
               showRoute
                 ? "bg-cyan-500 border-cyan-400 text-white font-bold"
                 : "bg-slate-900 border-slate-800 text-slate-400"
@@ -1003,7 +1003,7 @@ export default function PlannerLayout() {
         <button
           type="button"
           onClick={() => setMobileMapOpen(true)}
-          className="md:hidden fixed bottom-6 right-6 z-20 bg-yellow-400 text-slate-950 font-bold p-4 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 animate-bounce"
+          className="lg:hidden fixed bottom-6 right-6 z-20 bg-yellow-400 text-slate-950 font-bold p-4 rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 animate-bounce"
         >
           <Map className="w-6 h-6" />
         </button>

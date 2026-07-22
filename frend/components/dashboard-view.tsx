@@ -84,27 +84,27 @@ export default function DashboardView({ onPlanTrip, onViewSaved }: DashboardView
   ];
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto">
+    <div className="space-y-6 md:space-y-8 lg:space-y-10 max-w-7xl mx-auto">
       {/* Header greeting */}
       <div>
-        <h1 className="font-serif text-4xl md:text-5xl text-slate-50 font-bold tracking-tight mb-2">
+        <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-slate-50 font-bold tracking-tight mb-2">
           Ready, Rudra?
         </h1>
-        <p className="text-slate-400 text-sm md:text-base font-sans">
+        <p className="text-slate-400 text-xs md:text-sm lg:text-base font-sans">
           Your AI Travel Concierge is primed. Let's design your next extraordinary escape.
         </p>
       </div>
 
       {/* Global Search */}
       <div className="relative max-w-3xl">
-        <div className="flex items-center w-full bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-full py-2 pl-6 pr-2 shadow-2xl">
-          <Search className="w-5 h-5 text-slate-400 mr-3 shrink-0" />
+        <div className="flex items-center w-full bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-full py-1.5 pl-4 pr-1.5 md:py-2 md:pl-6 md:pr-2 shadow-2xl">
+          <Search className="w-4 h-4 md:w-5 md:h-5 text-slate-400 mr-2 md:mr-3 shrink-0" />
           <input
             type="text"
-            placeholder="Search destinations, travel themes, or itineraries..."
-            className="w-full bg-transparent text-slate-100 text-sm focus:outline-none placeholder-slate-500"
+            placeholder="Search destinations, travel themes..."
+            className="w-full bg-transparent text-slate-100 text-xs md:text-sm focus:outline-none placeholder-slate-500"
           />
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-slate-950 px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 shadow-lg shadow-yellow-400/10 shrink-0">
+          <button className="bg-yellow-400 hover:bg-yellow-500 text-slate-950 px-4 py-2 md:px-6 md:py-2.5 rounded-full text-xs font-bold transition-all duration-300 shadow-lg shadow-yellow-400/10 shrink-0">
             Explore
           </button>
         </div>
@@ -154,7 +154,7 @@ export default function DashboardView({ onPlanTrip, onViewSaved }: DashboardView
       {/* AI Recommendations */}
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="font-serif text-2xl font-bold text-slate-100">
+          <h2 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-slate-100">
             AI Personalized Recommendations
           </h2>
           <span className="text-xs text-yellow-400 font-semibold tracking-wider uppercase cursor-pointer hover:underline">
@@ -214,7 +214,7 @@ export default function DashboardView({ onPlanTrip, onViewSaved }: DashboardView
 
       {/* Trending Destinations */}
       <div>
-        <h2 className="font-serif text-2xl font-bold text-slate-100 mb-6">
+        <h2 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-slate-100 mb-6">
           Trending Journeys
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

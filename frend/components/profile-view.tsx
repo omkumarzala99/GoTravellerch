@@ -19,9 +19,9 @@ export default function ProfileView() {
   ];
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto">
+    <div className="space-y-6 md:space-y-8 lg:space-y-10 max-w-7xl mx-auto">
       {/* Header Profile Info */}
-      <div className="glass-panel p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center md:items-start gap-6">
+      <div className="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center md:items-start gap-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/5 rounded-full blur-3xl" />
         
         {/* Avatar Placeholder */}
@@ -32,14 +32,14 @@ export default function ProfileView() {
         {/* Details */}
         <div className="space-y-3 text-center md:text-left flex-1">
           <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start">
-            <h1 className="font-serif text-3xl text-slate-50 font-bold tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl text-slate-50 font-bold tracking-tight">
               Rudra Suthar
             </h1>
             <span className="self-center md:self-auto px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-yellow-400/10 border border-yellow-400/30 text-yellow-400">
               Elite Voyager
             </span>
           </div>
-          <p className="text-slate-400 text-sm max-w-xl font-sans">
+          <p className="text-slate-400 text-xs md:text-sm max-w-xl font-sans">
             Wanderer at heart, curious about culinary heritage, historical architecture, and luxury wellness escapes.
           </p>
           <div className="text-xs text-slate-500">
@@ -49,7 +49,7 @@ export default function ProfileView() {
       </div>
 
       {/* Stat Blocks */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
@@ -93,7 +93,7 @@ export default function ProfileView() {
       <div className="space-y-6">
         <div className="flex items-center gap-2 border-b border-slate-800/60 pb-3">
           <Award className="w-5 h-5 text-yellow-400" />
-          <h2 className="font-serif text-xl font-bold text-slate-100">
+          <h2 className="font-serif text-lg md:text-xl font-bold text-slate-100">
             Explorer Milestones
           </h2>
         </div>

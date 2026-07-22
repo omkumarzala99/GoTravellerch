@@ -34,7 +34,7 @@ export default function RootLayout({
           <Sidebar />
 
           {/* Main Content Area */}
-          <main className="flex-1 ml-64 min-h-screen overflow-y-auto px-6 md:px-10 py-10 scrollbar-thin">
+          <main className="flex-1 ml-0 lg:ml-56 xl:ml-64 min-h-screen overflow-y-auto pt-20 pb-10 lg:py-10 px-4 md:px-10 scrollbar-thin">
             {children}
           </main>
         </div>
