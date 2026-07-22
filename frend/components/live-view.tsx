@@ -302,6 +302,17 @@ export default function LiveView() {
 
   const [tracking, setTracking] = useState<boolean>(false);
 
+  // Sidebar open tracking to block map pointer events
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleSidebarToggle = () => {
+      setIsSidebarOpen(document.body.classList.contains("overflow-hidden"));
+    };
+    window.addEventListener("sidebarToggle", handleSidebarToggle);
+    return () => window.removeEventListener("sidebarToggle", handleSidebarToggle);
+  }, []);
+
   // ---------------- INIT MAP ----------------
   useEffect(() => {
     if (!mapRef.current) return;
@@ -344,6 +355,18 @@ export default function LiveView() {
 
       setTimeout(() => map.invalidateSize(), 300);
 
+      const handleResize = () => {
+        setTimeout(() => {
+          if (mapInstance.current) {
+            mapInstance.current.invalidateSize();
+          }
+        }, 300);
+      };
+      window.addEventListener("resize", handleResize);
+      window.addEventListener("sidebarToggle", handleResize);
+      window.addEventListener("orientationchange", handleResize);
+      (map as any)._resizeListener = handleResize;
+
       // ---------------- START TRACKING ----------------
       if (navigator.geolocation && tracking) {
         watchId.current = navigator.geolocation.watchPosition((pos) => {
@@ -373,6 +396,12 @@ export default function LiveView() {
       }
 
       if (mapInstance.current) {
+        const resizeListener = (mapInstance.current as any)._resizeListener;
+        if (resizeListener) {
+          window.removeEventListener("resize", resizeListener);
+          window.removeEventListener("sidebarToggle", resizeListener);
+          window.removeEventListener("orientationchange", resizeListener);
+        }
         mapInstance.current.remove();
         mapInstance.current = null;
       }
@@ -445,11 +474,11 @@ export default function LiveView() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full">
 
       {/* HEADER */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-white">
           Live Trip Navigation
         </h1>
 
@@ -467,50 +496,16 @@ export default function LiveView() {
       </div>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 items-start">
 
         {/* MAP */}
-        <div className="lg:col-span-2 bg-[#070b16] rounded-xl p-3">
+        <div className={`lg:col-span-2 lg:row-span-2 bg-[#070b16] rounded-3xl p-0 order-2 lg:order-1 w-full relative overflow-hidden h-[320px] md:h-[500px] lg:h-full ${isSidebarOpen ? "pointer-events-none" : ""}`}>
           <div
             ref={mapRef}
-            className="w-full h-[500px] rounded-xl overflow-hidden"
+            className="w-full h-full"
           />
         </div>
 
-        {/* RIGHT PANEL */}
-        {/* <div className="space-y-4">
-
-          <div className="bg-[#070b16] p-4 rounded-xl text-white">
-            <h2 className="font-bold mb-2">Today's Plan</h2>
-            <p className="text-sm text-gray-400">
-              Live itinerary panel
-            </p>
-          </div> */}
-
-          {/* CHAT */}
-          {/* <div className="bg-[#070b16] p-4 rounded-xl flex flex-col h-[300px]">
-
-            <div className="flex-1 overflow-y-auto text-white text-xs space-y-2">
-              {chatHistory.map((msg, i) => (
-                <div key={i}>
-                  <div
-                    className={`p-2 rounded w-fit ${
-                      msg.role === "user"
-                        ? "bg-blue-600 ml-auto"
-                        : "bg-gray-800"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <form onSubmit={handleSendChat} className="flex gap-2 mt-2">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                className="flex-1 p-2 text-xs bg-black text-white rounded"
         {/* Today's Plan Timeline */}
         <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 bg-[#070b16]/75 order-1 lg:order-2">
           <h3 className="font-serif text-sm md:text-base font-bold text-slate-100 border-b border-slate-800/60 pb-2.5">

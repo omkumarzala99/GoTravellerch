@@ -207,6 +207,17 @@ export default function PlannerLayout() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Sidebar open tracking to block map pointer events
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleSidebarToggle = () => {
+      setIsSidebarOpen(document.body.classList.contains("overflow-hidden"));
+    };
+    window.addEventListener("sidebarToggle", handleSidebarToggle);
+    return () => window.removeEventListener("sidebarToggle", handleSidebarToggle);
+  }, []);
+
   // Form State
   const [destination, setDestination] = useState<Destination>(popularDestinations[0]);
   const [startDate, setStartDate] = useState("2026-10-15");
@@ -886,9 +897,9 @@ export default function PlannerLayout() {
 
       {/* 2. RIGHT SIDE MAP PANEL */}
       <div
-        className={`w-full lg:w-[35%] lg:h-screen lg:sticky lg:top-0 h-[450px] relative overflow-hidden bg-[#070b16] shrink-0 ${
-          mobileMapOpen ? "fixed inset-0 z-30 !h-screen" : "block"
-        }`}
+        className={`w-full lg:w-[35%] lg:h-screen lg:sticky lg:top-0 h-[320px] md:h-[500px] relative overflow-hidden rounded-3xl bg-[#070b16] shrink-0 ${
+          mobileMapOpen ? "fixed inset-0 z-30 !h-screen !rounded-none" : "block"
+        } ${isSidebarOpen ? "pointer-events-none" : ""}`}
       >
         <MapComponent
           centerLat={destination.lat}
@@ -904,7 +915,7 @@ export default function PlannerLayout() {
         />
 
         {/* FLOATING QUICK ACTIONS (Bottom-Right of Map - Absolute Overlay) */}
-        <div className="absolute bottom-3 right-3 left-3 lg:left-auto lg:bottom-6 lg:right-6 z-[9999] flex flex-wrap lg:flex-col justify-end gap-2.5 sm:gap-3 pointer-events-auto">
+        <div className="absolute bottom-4 right-4 z-[1000] flex flex-wrap lg:flex-col justify-end gap-2.5 pointer-events-auto max-w-[calc(100%-32px)]">
           {/* Map Style Toggle */}
           <button
             type="button"

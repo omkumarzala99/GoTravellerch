@@ -78,11 +78,15 @@ export default function Map({
       setTimeout(() => map.invalidateSize(), 300);
 
       const handleResize = () => {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.invalidateSize();
-        }
+        setTimeout(() => {
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
+        }, 300);
       };
       window.addEventListener("resize", handleResize);
+      window.addEventListener("sidebarToggle", handleResize);
+      window.addEventListener("orientationchange", handleResize);
       (map as any)._resizeListener = handleResize;
     })();
 
@@ -91,6 +95,8 @@ export default function Map({
         const resizeListener = (mapInstanceRef.current as any)._resizeListener;
         if (resizeListener) {
           window.removeEventListener("resize", resizeListener);
+          window.removeEventListener("sidebarToggle", resizeListener);
+          window.removeEventListener("orientationchange", resizeListener);
         }
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;

@@ -9,6 +9,13 @@
   --color-card-dark: #0b1120;
 }
 
+html,
+body {
+  overflow-x: hidden;
+  min-width: 0;
+  max-width: 100%;
+}
+
 /* Custom Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

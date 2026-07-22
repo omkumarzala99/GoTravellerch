@@ -14,6 +14,24 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
+  const toggleSidebar = (openState: boolean) => {
+    setIsOpen(openState);
+    setTimeout(() => {
+      window.dispatchEvent(new Event("sidebarToggle"));
+    }, 150);
+  };
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen]);
+
   const navItems = [
     { id: "home", label: "Home", icon: Home, href: "/" },
     { id: "plan", label: "Plan Trip", icon: Compass, href: "/plan" },
@@ -38,8 +56,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     <>
       {/* Mobile/Tablet Hamburger Menu Trigger */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-slate-900/90 border border-slate-800 text-slate-200 hover:text-white shadow-lg backdrop-blur-md transition-all active:scale-95 focus:outline-none"
+        onClick={() => toggleSidebar(true)}
+        className="lg:hidden fixed top-4 left-4 z-[9998] p-2 rounded-lg bg-slate-900/90 border border-slate-800 text-slate-200 hover:text-white shadow-lg backdrop-blur-md transition-all active:scale-95 focus:outline-none"
         aria-label="Open Navigation"
       >
         <Menu className="w-5 h-5" />
@@ -47,15 +65,20 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
       {/* Overlay Backdrop for Mobile/Tablet */}
       <div
-        onClick={() => setIsOpen(false)}
-        className={`fixed inset-0 bg-slate-950/60 z-40 transition-opacity duration-300 lg:hidden ${
+        onClick={() => toggleSidebar(false)}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        className={`fixed inset-0 bg-slate-950/60 z-[9999] transition-opacity duration-300 lg:hidden ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       />
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 left-0 h-full border-r border-slate-800 bg-[#070b16] flex flex-col z-50 transition-transform duration-300 transform 
+        className={`fixed top-0 left-0 h-full border-r border-slate-800 bg-[#070b16] flex flex-col z-[10000] transition-transform duration-300 transform 
           lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
           w-64 lg:w-56 xl:w-64`}
       >
@@ -77,7 +100,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
           {/* Close button inside Drawer for Mobile/Tablet */}
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => toggleSidebar(false)}
             className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors focus:outline-none"
             aria-label="Close Navigation"
           >
@@ -92,7 +115,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             const isActive = currentActive === item.id;
 
             const handleItemClick = (e: React.MouseEvent) => {
-              setIsOpen(false);
+              toggleSidebar(false);
               if (setActiveTab) {
                 e.preventDefault();
                 setActiveTab(item.id);
